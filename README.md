@@ -168,7 +168,8 @@ nuestro público.
 | Fase 01 · Base | ✅ Hecho |
 | Fase 02 · Intercambio | ✅ Hecho |
 | Fase 03 · Comisión | ✅ Incluida en Fase 02 (0,05% vía 0x) |
-| Fase 04 · Diferenciación | ⏳ Siguiente |
+| Fase 04 · Panel de ganancias | ✅ Hecho |
+| Fase 04 · Órdenes límite | ⏳ Requiere backend (Hostinger) — primer trabajo del siguiente hito |
 | Fase 05 · Antes de abrir | ⬜ Pendiente |
 
 ### Archivos del repo
@@ -176,25 +177,37 @@ nuestro público.
 - `README.md` — este documento (la brújula).
 - `index.html` — **Fase 01**. Conexión de wallet y lectura de saldo, sin
   custodia. ethers.js v6 desde CDN. Detecta la red y marca si es «barata».
-- `swap.html` — **Fase 02**. Primer intercambio real vía el agregador **0x**:
-  elige tokens y monto, consulta el mejor precio entre DEX, y ejecuta el swap
-  firmado por el usuario (con `approve` automático si el token lo requiere).
-  Incluye ya la **comisión del 0,05% (5 bps)** mediante los parámetros de fee de
-  0x (Fase 03 adelantada). El dinero nunca pasa por nosotros.
+- `swap.html` — **Fase 02**. Primer intercambio real vía el agregador **0x**,
+  con la **comisión del 0,05%** ya integrada. El swap lo firma el usuario.
+- `panel.html` — **Fase 04**. Panel de ganancias desde el punto de entrada:
+  registra posiciones, busca el precio actual (CoinGecko, sin key) y calcula la
+  ganancia/pérdida, con resumen total y una gráfica de barras por posición.
+  Guarda en el navegador (localStorage) como puente.
+
+### El siguiente hito: el backend (Hostinger)
+
+Dos cosas del proyecto **necesitan un servidor que corra siempre** y una base de
+datos. Ese es el próximo gran paso:
+
+1. **Órdenes límite** — el usuario firma la orden (no-custodial), pero hace falta
+   un servicio que **vigile precios 24/7** y la dispare al cumplirse. No puede
+   vivir en un sitio estático.
+2. **Persistencia real del panel** — hoy el panel guarda en el navegador; la
+   versión final guarda las posiciones en la **base de datos**, para verlas desde
+   cualquier dispositivo, y las captura solas al operar (Fase 02).
+3. **Proxy de la API de 0x** — mover la API key del frontend al servidor, como se
+   anotó en la Fase 02.
 
 ### Pendiente técnico anotado (para no olvidar)
 
-- **API key de 0x en el frontend:** en `swap.html` la key se introduce en la
-  interfaz solo para probar. **En producción debe ir en un proxy en el
-  servidor** (Hostinger), no expuesta en el navegador. Además, algunas APIs
-  bloquean llamadas directas desde el navegador (CORS); si aparece ese error, es
-  la señal de que toca montar el proxy. La lógica ya queda lista para ese
-  momento.
-- **Direcciones de tokens:** las de referencia en `swap.html` deben verificarse
-  en el explorador de cada red antes de operar con cantidades reales. Probar
-  siempre primero con montos mínimos.
-- **Wallet que cobra la comisión:** se configura en «Ajustes y seguridad» dentro
-  de `swap.html`. Si se deja vacía, se opera sin comisión (modo prueba).
+- **API key de 0x en el frontend:** en `swap.html` la key va en la interfaz solo
+  para probar. En producción → proxy en el servidor.
+- **Direcciones de tokens:** las de referencia (en `swap.html` y `panel.html`)
+  deben verificarse en el explorador antes de operar con cantidades reales.
+  Probar siempre primero con montos mínimos.
+- **Wallet que cobra la comisión:** se configura en `swap.html` (Ajustes).
+- **Precios del panel:** hoy vienen de CoinGecko (gratis, con límites). En
+  producción se puede centralizar en el backend.
 
 *Se irá ampliando archivo por archivo, poco a poco.*
 

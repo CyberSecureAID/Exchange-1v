@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Plataforma no-custodial · Fase 04 · Panel de ganancias</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0A0E18; --bg-2:#0E1320; --surface:#121A2B; --surface-2:#18223A;
+    --line:rgba(150,175,220,0.12); --line-2:rgba(150,175,220,0.22);
+    --text:#EAEEF7; --text-2:#9AA6BE; --text-3:#626E86;
+    --gold:#E0B457; --gold-dim:rgba(224,180,87,0.16);
+    --mint:#56D9A0; --mint-dim:rgba(86,217,160,0.14);
+    --rose:#E0857A; --rose-dim:rgba(224,133,122,0.14);
+    --font-display:'Sora',system-ui,sans-serif;
+    --font-body:'Inter',system-ui,sans-serif;
+    --font-mono:'JetBrains Mono',ui-monospace,monospace;
+  }
+  *{box-sizing:border-box;}
+  @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important;}}
+  body{
+    margin:0;min-height:100vh;
+    background:
+      radial-gradient(1100px 600px at 80% -5%,rgba(224,180,87,0.07),transparent 60%),
+      radial-gradient(900px 500px at 0% 10%,rgba(86,217,160,0.05),transparent 55%),
+      var(--bg);
+    color:var(--text);font-family:var(--font-body);line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{width:100%;max-width:640px;margin:0 auto;padding:0 1.5rem;}
+  header{padding:clamp(2.5rem,8vw,3.5rem) 0 1.5rem;}
+  .eyebrow{font-family:var(--font-mono);font-size:0.72rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--gold);margin:0 0 0.9rem;display:inline-flex;align-items:center;gap:0.6rem;}
+  .eyebrow::before{content:"";width:26px;height:1px;background:var(--gold);opacity:0.7;}
+  header h1{font-family:var(--font-display);font-weight:800;font-size:clamp(1.7rem,5vw,2.4rem);line-height:1.1;letter-spacing:-0.02em;margin:0 0 0.7rem;}
+  header p{color:var(--text-2);margin:0;font-size:1rem;}
+
+  .panel{background:linear-gradient(180deg,var(--surface),var(--bg-2));border:1px solid var(--line-2);border-radius:20px;padding:clamp(1.4rem,5vw,2rem);position:relative;overflow:hidden;margin-bottom:1rem;}
+  .panel::before{content:"";position:absolute;inset:0 auto 0 0;width:3px;background:linear-gradient(180deg,var(--gold),transparent);}
+  h2.title{font-family:var(--font-display);font-weight:600;font-size:1.15rem;margin:0 0 1.1rem;}
+
+  /* Resumen total */
+  .summary{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--line);border-radius:16px;overflow:hidden;margin-bottom:1rem;}
+  .summary .cell{background:var(--surface);padding:1.2rem;}
+  .summary .cell:nth-child(3),.summary .cell:nth-child(4){}
+  .summary .k{font-family:var(--font-mono);font-size:0.66rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--text-3);margin-bottom:0.35rem;}
+  .summary .v{font-family:var(--font-display);font-weight:700;font-size:1.5rem;}
+  .summary .v.small{font-size:1.15rem;}
+  .pos{color:var(--mint);} .neg{color:var(--rose);}
+
+  /* Formulario añadir */
+  .field{margin-bottom:0.8rem;}
+  .field label{display:block;font-family:var(--font-mono);font-size:0.66rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--text-3);margin-bottom:0.4rem;}
+  .control{display:flex;gap:0.5rem;background:var(--bg-2);border:1px solid var(--line-2);border-radius:10px;padding:0.15rem 0.15rem 0.15rem 0.8rem;align-items:center;}
+  .control input,.control select{background:transparent;border:none;color:var(--text);font-family:var(--font-body);font-size:0.98rem;outline:none;width:100%;padding:0.55rem 0;}
+  .control select{cursor:pointer;font-family:var(--font-mono);font-size:0.88rem;flex:0 0 auto;border-left:1px solid var(--line-2);padding-left:0.6rem;}
+  .control select option{background:var(--surface);}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:0.8rem;}
+  @media (max-width:520px){.grid2{grid-template-columns:1fr;}}
+
+  .btn{display:inline-flex;align-items:center;justify-content:center;gap:0.6rem;width:100%;padding:0.9rem 1.2rem;border-radius:12px;font-family:var(--font-display);font-weight:600;font-size:0.98rem;cursor:pointer;border:1px solid var(--gold);color:#1A130A;background:linear-gradient(180deg,#F0C978,var(--gold));transition:transform 0.15s,box-shadow 0.25s,opacity 0.2s;}
+  .btn:hover{transform:translateY(-1px);box-shadow:0 10px 30px -10px rgba(224,180,87,0.5);}
+  .btn:disabled{opacity:0.5;cursor:default;}
+  .btn--ghost{background:transparent;color:var(--text-2);border:1px solid var(--line-2);}
+  .btn--ghost:hover{color:var(--text);background:var(--surface-2);box-shadow:none;}
+
+  /* Lista de posiciones */
+  .position{display:grid;grid-template-columns:1fr auto;gap:0.6rem 1rem;padding:1rem 0;border-bottom:1px solid var(--line);align-items:center;}
+  .position:last-child{border-bottom:none;}
+  .position .tok{font-family:var(--font-display);font-weight:600;font-size:1rem;}
+  .position .amt{font-family:var(--font-mono);font-size:0.78rem;color:var(--text-3);}
+  .position .pnl{text-align:right;font-family:var(--font-mono);font-weight:500;font-size:1rem;}
+  .position .pct{text-align:right;font-family:var(--font-mono);font-size:0.76rem;color:var(--text-3);}
+  .position .vals{font-family:var(--font-mono);font-size:0.72rem;color:var(--text-3);grid-column:1 / -1;display:flex;justify-content:space-between;gap:1rem;}
+  .position .del{background:none;border:none;color:var(--text-3);cursor:pointer;font-family:var(--font-mono);font-size:0.72rem;padding:0;}
+  .position .del:hover{color:var(--rose);}
+
+  .empty{text-align:center;color:var(--text-3);padding:2rem 0;font-size:0.92rem;}
+
+  /* Gráfica */
+  .chart{margin-top:0.5rem;}
+  .chart svg{width:100%;height:auto;display:block;}
+  .chart .bar-label{font-family:var(--font-mono);font-size:9px;fill:var(--text-2);}
+  .chart .bar-val{font-family:var(--font-mono);font-size:9px;}
+
+  .notice{border-radius:12px;padding:0.85rem 1rem;font-size:0.86rem;line-height:1.5;margin-bottom:1rem;}
+  .notice--info{background:var(--gold-dim);border:1px solid rgba(224,180,87,0.3);color:var(--text-2);}
+  .notice--warn{background:var(--rose-dim);border:1px solid rgba(224,133,122,0.35);color:var(--text);display:none;}
+  .notice--warn.is-visible{display:block;}
+  .notice b{color:var(--text);} .notice--info b{color:var(--gold);}
+
+  .toolbar{display:flex;gap:0.6rem;margin-bottom:1rem;}
+  .toolbar .btn{width:auto;flex:1;padding:0.7rem 1rem;font-size:0.85rem;}
+
+  .status{font-family:var(--font-mono);font-size:0.78rem;color:var(--text-2);text-align:center;min-height:1.1em;margin-top:0.5rem;}
+
+  footer{padding:1.5rem 0 2.5rem;text-align:center;color:var(--text-3);font-family:var(--font-mono);font-size:0.72rem;}
+  footer .g{color:var(--gold);}
+  details{margin-bottom:1rem;border:1px solid var(--line);border-radius:12px;padding:0.8rem 1rem;background:var(--bg-2);}
+  summary{cursor:pointer;font-family:var(--font-mono);font-size:0.8rem;color:var(--gold);}
+  details p{font-size:0.85rem;color:var(--text-2);margin:0.7rem 0 0;}
+</style>
+</head>
+<body>
+
+  <header>
+    <div class="wrap">
+      <p class="eyebrow">Fase 04 · Diferenciación</p>
+      <h1>Tus ganancias, desde el punto de entrada</h1>
+      <p>Registra tus posiciones y mira cuánto ganas o pierdes en tiempo real. Esto es lo que un DEX no te da.</p>
+    </div>
+  </header>
+
+  <div class="wrap">
+
+    <div class="notice notice--info">
+      <b>Cómo funciona esta versión:</b> registras tus posiciones a mano y el panel busca el precio
+      actual para calcular tu ganancia desde el punto de entrada. En el producto final, cada posición
+      se <b>capturará sola</b> al operar (Fase 02) y se guardará en la <b>base de datos del servidor</b>
+      para verla desde cualquier dispositivo. Por ahora se guarda en este navegador.
+    </div>
+
+    <!-- Resumen -->
+    <div class="summary" id="summary">
+      <div class="cell"><div class="k">Valor actual</div><div class="v small" id="sVal">—</div></div>
+      <div class="cell"><div class="k">Invertido</div><div class="v small" id="sCost">—</div></div>
+      <div class="cell"><div class="k">Ganancia / pérdida</div><div class="v" id="sPnl">—</div></div>
+      <div class="cell"><div class="k">Rendimiento</div><div class="v" id="sPct">—</div></div>
+    </div>
+
+    <div class="toolbar">
+      <button class="btn btn--ghost" id="refreshBtn">↻ Actualizar precios</button>
+    </div>
+    <div class="status" id="status"></div>
+    <div class="notice notice--warn" id="priceWarn"></div>
+
+    <!-- Añadir posición -->
+    <div class="panel">
+      <h2 class="title">Añadir posición</h2>
+      <div class="grid2">
+        <div class="field">
+          <label>Token</label>
+          <div class="control"><select id="fToken"></select></div>
+        </div>
+        <div class="field">
+          <label>Cantidad</label>
+          <div class="control"><input type="text" id="fAmount" inputmode="decimal" placeholder="0.0"></div>
+        </div>
+      </div>
+      <div class="field">
+        <label>Cuánto pagaste en total (USD)</label>
+        <div class="control"><input type="text" id="fCost" inputmode="decimal" placeholder="p. ej. 500"></div>
+      </div>
+      <button class="btn" id="addBtn">Añadir al panel</button>
+    </div>
+
+    <!-- Posiciones -->
+    <div class="panel">
+      <h2 class="title">Tus posiciones</h2>
+      <div id="positions"><div class="empty">Aún no has añadido posiciones.</div></div>
+    </div>
+
+    <!-- Gráfica -->
+    <div class="panel" id="chartPanel" style="display:none;">
+      <h2 class="title">Ganancia por posición</h2>
+      <div class="chart" id="chart"></div>
+    </div>
+
+    <details>
+      <summary>Sobre las órdenes límite (lo que viene)</summary>
+      <p>Las <b>órdenes límite</b> (comprar/vender automáticamente al llegar a un precio) son la otra
+      mitad de esta fase, pero necesitan un servicio que vigile precios <b>las 24 horas</b> y ejecute
+      cuando se cumpla la condición. Eso no puede vivir en un sitio estático: nace junto al
+      <b>backend en Hostinger</b>. La orden la firma el usuario (no-custodial); el servidor solo vigila
+      y dispara. Es el primer trabajo de la siguiente fase.</p>
+    </details>
+
+  </div>
+
+  <footer>
+    <div class="wrap">No-custodial <span class="g">·</span> Fase 04 · tu rendimiento, no el de un DEX genérico</div>
+  </footer>
+
+  <script>
+  (function(){
+    "use strict";
+
+    // Tokens con su id de precio (CoinGecko). Verifica antes de usar en serio.
+    var TOKENS = [
+      { s:"ETH",  id:"ethereum" },
+      { s:"BNB",  id:"binancecoin" },
+      { s:"POL",  id:"matic-network" },
+      { s:"BTC",  id:"bitcoin" },
+      { s:"USDC", id:"usd-coin" },
+      { s:"USDT", id:"tether" }
+    ];
+    var STORE_KEY = "ncp_positions_v1";
+
+    var $ = function(id){ return document.getElementById(id); };
+    var fToken=$("fToken"), fAmount=$("fAmount"), fCost=$("fCost"), addBtn=$("addBtn");
+    var positionsEl=$("positions"), refreshBtn=$("refreshBtn"), statusEl=$("status");
+    var priceWarn=$("priceWarn"), chartPanel=$("chartPanel"), chartEl=$("chart");
+    var sVal=$("sVal"), sCost=$("sCost"), sPnl=$("sPnl"), sPct=$("sPct");
+
+    var positions = load();
+    var prices = {}; // id -> usd
+
+    // Poblar selector
+    TOKENS.forEach(function(t){
+      var o=document.createElement("option"); o.value=t.s; o.textContent=t.s; fToken.appendChild(o);
+    });
+
+    function load(){
+      try{ var raw=localStorage.getItem(STORE_KEY); return raw?JSON.parse(raw):[]; }
+      catch(e){ return []; }
+    }
+    function save(){
+      try{ localStorage.setItem(STORE_KEY, JSON.stringify(positions)); }catch(e){}
+    }
+    function idOf(sym){ var t=TOKENS.filter(function(x){return x.s===sym;})[0]; return t?t.id:null; }
+    function money(n){ return "$"+Number(n).toLocaleString("es",{maximumFractionDigits:2}); }
+    function setStatus(t){ statusEl.textContent=t||""; }
+
+    // ── Precios (CoinGecko, sin key; con aviso si falla) ──
+    async function fetchPrices(){
+      priceWarn.classList.remove("is-visible");
+      var ids = {};
+      positions.forEach(function(p){ var id=idOf(p.s); if(id) ids[id]=true; });
+      var list = Object.keys(ids);
+      if(!list.length){ render(); return; }
+      setStatus("Buscando precios actuales…");
+      try{
+        var url="https://api.coingecko.com/api/v3/simple/price?ids="+list.join(",")+"&vs_currencies=usd";
+        var res=await fetch(url);
+        if(!res.ok) throw new Error("HTTP "+res.status);
+        var data=await res.json();
+        list.forEach(function(id){ if(data[id] && typeof data[id].usd==="number") prices[id]=data[id].usd; });
+        setStatus("");
+      }catch(e){
+        setStatus("");
+        priceWarn.textContent="No se pudieron obtener los precios automáticamente (límite o red). Los valores usan el último precio conocido; inténtalo de nuevo en un momento.";
+        priceWarn.classList.add("is-visible");
+      }
+      render();
+    }
+
+    // ── Cálculos ──
+    function calc(p){
+      var id=idOf(p.s);
+      var price = id && prices[id]!=null ? prices[id] : null;
+      var current = price!=null ? p.amount*price : null;
+      var pnl = current!=null ? current - p.cost : null;
+      var pct = (current!=null && p.cost>0) ? (pnl/p.cost*100) : null;
+      return { price:price, current:current, pnl:pnl, pct:pct };
+    }
+
+    // ── Render ──
+    function render(){
+      if(!positions.length){
+        positionsEl.innerHTML='<div class="empty">Aún no has añadido posiciones.</div>';
+        chartPanel.style.display="none";
+        sVal.textContent="—"; sCost.textContent="—"; sPnl.textContent="—"; sPct.textContent="—";
+        sPnl.className="v"; sPct.className="v";
+        return;
+      }
+      var html="", totalVal=0, totalCost=0, anyPrice=false;
+      positions.forEach(function(p,i){
+        var c=calc(p); totalCost+=p.cost;
+        if(c.current!=null){ totalVal+=c.current; anyPrice=true; }
+        var cls = c.pnl==null?"":(c.pnl>=0?"pos":"neg");
+        var pnlTxt = c.pnl==null?"—":((c.pnl>=0?"+":"")+money(c.pnl));
+        var pctTxt = c.pct==null?"":((c.pct>=0?"+":"")+c.pct.toFixed(2)+"%");
+        html+=''
+          +'<div class="position">'
+          +  '<div><div class="tok">'+p.s+'</div><div class="amt">'+p.amount+' '+p.s+'</div></div>'
+          +  '<div><div class="pnl '+cls+'">'+pnlTxt+'</div><div class="pct">'+pctTxt+'</div></div>'
+          +  '<div class="vals">'
+          +    '<span>Invertido: '+money(p.cost)+'</span>'
+          +    '<span>'+(c.current!=null?("Ahora: "+money(c.current)):"Sin precio")+'</span>'
+          +    '<button class="del" data-i="'+i+'">quitar</button>'
+          +  '</div>'
+          +'</div>';
+      });
+      positionsEl.innerHTML=html;
+
+      // botones quitar
+      Array.prototype.forEach.call(positionsEl.querySelectorAll(".del"), function(b){
+        b.addEventListener("click", function(){ positions.splice(parseInt(b.getAttribute("data-i"),10),1); save(); render(); });
+      });
+
+      // resumen
+      sCost.textContent=money(totalCost);
+      if(anyPrice){
+        sVal.textContent=money(totalVal);
+        var tp=totalVal-totalCost;
+        var tpct=totalCost>0?(tp/totalCost*100):0;
+        sPnl.textContent=(tp>=0?"+":"")+money(tp); sPnl.className="v "+(tp>=0?"pos":"neg");
+        sPct.textContent=(tpct>=0?"+":"")+tpct.toFixed(2)+"%"; sPct.className="v "+(tpct>=0?"pos":"neg");
+      }else{
+        sVal.textContent="—"; sPnl.textContent="—"; sPct.textContent="—";
+      }
+
+      drawChart();
+    }
+
+    // ── Gráfica de barras (PnL por posición), SVG sin librerías ──
+    function drawChart(){
+      var data=positions.map(function(p){ var c=calc(p); return { s:p.s, pnl:c.pnl }; }).filter(function(d){ return d.pnl!=null; });
+      if(!data.length){ chartPanel.style.display="none"; return; }
+      chartPanel.style.display="block";
+      var W=560, rowH=34, pad=8, midX=W/2;
+      var H=data.length*rowH+pad*2;
+      var maxAbs=Math.max.apply(null, data.map(function(d){ return Math.abs(d.pnl); }).concat([1]));
+      var svg='<svg viewBox="0 0 '+W+' '+H+'" preserveAspectRatio="xMidYMid meet">';
+      svg+='<line x1="'+midX+'" y1="'+pad+'" x2="'+midX+'" y2="'+(H-pad)+'" stroke="rgba(150,175,220,0.2)" stroke-width="1"/>';
+      data.forEach(function(d,i){
+        var y=pad+i*rowH+6, bh=rowH-16;
+        var w=(Math.abs(d.pnl)/maxAbs)*(midX-70);
+        var pos=d.pnl>=0;
+        var x=pos?midX:midX-w;
+        var color=pos?"#56D9A0":"#E0857A";
+        svg+='<rect x="'+x+'" y="'+y+'" width="'+Math.max(w,1)+'" height="'+bh+'" rx="3" fill="'+color+'" opacity="0.85"/>';
+        svg+='<text class="bar-label" x="6" y="'+(y+bh-1)+'">'+d.s+'</text>';
+        svg+='<text class="bar-val" x="'+(W-6)+'" y="'+(y+bh-1)+'" text-anchor="end" fill="'+color+'">'+(pos?"+":"")+money(d.pnl)+'</text>';
+      });
+      svg+='</svg>';
+      chartEl.innerHTML=svg;
+    }
+
+    // ── Añadir ──
+    addBtn.addEventListener("click", function(){
+      var s=fToken.value;
+      var amt=parseFloat((fAmount.value||"").replace(",","."));
+      var cost=parseFloat((fCost.value||"").replace(",","."));
+      if(!s || isNaN(amt) || amt<=0 || isNaN(cost) || cost<0){ setStatus("Revisa la cantidad y el costo."); return; }
+      positions.push({ s:s, amount:amt, cost:cost, ts:Date.now() });
+      save(); fAmount.value=""; fCost.value=""; setStatus("");
+      fetchPrices();
+    });
+
+    refreshBtn.addEventListener("click", fetchPrices);
+
+    // Inicio
+    render();
+    fetchPrices();
+  })();
+  </script>
+</body>
+</html>
