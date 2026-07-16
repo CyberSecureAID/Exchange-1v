@@ -16,6 +16,13 @@ define('ZEROX_API_KEY', 'PON_AQUI_TU_API_KEY_DE_0X');
 // La usan las órdenes límite (backend/1inch-orders.php).
 define('ONEINCH_API_KEY', 'PON_AQUI_TU_API_KEY_DE_1INCH');
 
+// ── Base de datos MySQL (para el panel de ganancias) ──
+// Estos datos te los da Hostinger al crear la base de datos en hPanel.
+define('DB_HOST', 'localhost');
+define('DB_NAME', 'PON_AQUI_EL_NOMBRE_DE_LA_BD');
+define('DB_USER', 'PON_AQUI_EL_USUARIO');
+define('DB_PASS', 'PON_AQUI_LA_CONTRASENA');
+
 // Origen permitido para llamar al proxy (tu frontend).
 //   - En desarrollo puedes dejar '*' (cualquiera).
 //   - En producción, ponlo a tu dominio exacto, p. ej.:

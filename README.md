@@ -170,6 +170,7 @@ nuestro público.
 | Fase 03 · Comisión | ✅ Incluida en Fase 02 (0,05% vía 0x) |
 | Fase 04 · Panel de ganancias | ✅ Hecho |
 | Fase 04 · Órdenes límite | ⏳ Requiere backend (Hostinger) — primer trabajo del siguiente hito |
+| Fase 04 · Panel de ganancias | ✅ Frontend hecho · 🟡 base de datos lista (conectar) |
 | Fase 04 · Órdenes límite | 🟡 Backend listo · falta la firma (SDK, entorno build) |
 | Fase 05 · Antes de abrir | ⬜ Pendiente |
 
@@ -178,17 +179,30 @@ nuestro público.
 Se está escribiendo por adelantado, para tenerlo listo. No requiere pagar nada
 para desarrollarlo; el hosting se contrata al final, con el producto terminado.
 
-- `backend/0x-proxy.php` — **Proxy de 0x**. Esconde la API key de 0x: el frontend
-  llama a este archivo y él añade la key y reenvía a 0x. Allowlist de endpoints y
-  control de CORS.
+- `backend/0x-proxy.php` — **Proxy de 0x**. Esconde la API key de 0x. Allowlist
+  de endpoints y control de CORS.
 - `backend/1inch-orders.php` — **Órdenes límite (proxy de 1inch)**. Esconde la key
-  de 1inch y hace tres cosas: `submit` (transmitir una orden **ya firmada**),
-  `list` (órdenes de una dirección) y `status` (estado de una orden). **No
-  construye ni firma** la orden — eso es del SDK (ver abajo). No necesita base de
-  datos: 1inch mantiene el libro de órdenes. No custodia nada.
-- `backend/config.example.php` — Plantilla de configuración. Se copia a
-  `config.php` y se ponen ahí las API keys (0x y 1inch). `config.php` **no se
-  sube** al repo (está en `.gitignore`).
+  de 1inch: `submit` (transmitir orden **ya firmada**), `list`, `status`. No
+  construye ni firma la orden (eso es del SDK). No necesita base de datos.
+- `backend/panel-db.php` — **Base de datos del panel**. Guarda las posiciones en
+  MySQL por dirección de wallet (`list` / `add` / `delete`), para verlas desde
+  cualquier dispositivo. Usa **sentencias preparadas** (a prueba de inyección
+  SQL).
+- `backend/schema.sql` — La tabla `positions` para la base de datos (se importa
+  en phpMyAdmin).
+- `backend/config.example.php` — Plantilla de configuración: las **API keys** (0x
+  y 1inch) y los **datos de la base de datos** (host, nombre, usuario,
+  contraseña). Se copia a `config.php`, que **no se sube** al repo (`.gitignore`).
+
+### Pendientes de seguridad anotados (antes de abrir al público)
+
+- **Autenticación por firma:** hoy `panel-db.php` guarda/lista/borra posiciones
+  por dirección **sin verificar** que quien pide controla esa wallet. Antes de
+  producción hay que exigir una **firma** del usuario (probar que controla la
+  dirección) para que nadie lea ni borre las posiciones de otro. Las posiciones
+  no son fondos ni claves, pero esta capa es necesaria.
+- **La firma de las órdenes límite** se hace con el SDK de 1inch (entorno con
+  build) y se prueba en red de test con montos mínimos.
 
 ### Lo que falta de las órdenes límite (pieza pendiente, importante)
 
