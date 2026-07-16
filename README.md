@@ -165,12 +165,18 @@ nuestro público.
 | Fase | Estado |
 |---|---|
 | Documentación / brújula (este README) | ✅ Hecho |
-| Fase 01 · Base | ⏳ Siguiente |
-| Fase 02–05 | ⬜ Pendiente |
+| Fase 01 · Base | ✅ Hecho |
+| Fase 02 · Intercambio | ⏳ Siguiente |
+| Fase 03–05 | ⬜ Pendiente |
 
 ### Archivos del repo
 
 - `README.md` — este documento (la brújula).
+- `index.html` — **Fase 01**. Conexión de wallet y lectura de saldo, sin
+  custodia. Usa ethers.js v6 desde CDN (sin herramientas de build), así que se
+  puede subir a GitHub Pages y probar directamente. Detecta la red y marca si es
+  «barata» (objetivo del proyecto) o de «gas alto». Reintenta la conexión en
+  silencio si la wallet ya dio permiso, y reacciona a cambios de cuenta y de red.
 
 *Se irá ampliando archivo por archivo, poco a poco.*
 

@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Plataforma no-custodial · Fase 01</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:        #0A0E18;
+    --bg-2:      #0E1320;
+    --surface:   #121A2B;
+    --surface-2: #18223A;
+    --line:      rgba(150, 175, 220, 0.12);
+    --line-2:    rgba(150, 175, 220, 0.22);
+    --text:      #EAEEF7;
+    --text-2:    #9AA6BE;
+    --text-3:    #626E86;
+    --gold:      #E0B457;
+    --gold-dim:  rgba(224, 180, 87, 0.16);
+    --mint:      #56D9A0;
+    --mint-dim:  rgba(86, 217, 160, 0.14);
+    --rose:      #E0857A;
+    --rose-dim:  rgba(224, 133, 122, 0.14);
+
+    --font-display: 'Sora', system-ui, sans-serif;
+    --font-body:    'Inter', system-ui, sans-serif;
+    --font-mono:    'JetBrains Mono', ui-monospace, monospace;
+  }
+
+  * { box-sizing: border-box; }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation: none !important; transition: none !important; }
+  }
+
+  body {
+    margin: 0;
+    min-height: 100vh;
+    background:
+      radial-gradient(1100px 600px at 80% -5%, rgba(224, 180, 87, 0.07), transparent 60%),
+      radial-gradient(900px 500px at 0% 10%, rgba(86, 217, 160, 0.05), transparent 55%),
+      var(--bg);
+    color: var(--text);
+    font-family: var(--font-body);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .wrap { width: 100%; max-width: 560px; margin: 0 auto; padding: 0 1.5rem; }
+
+  /* ── Encabezado ── */
+  header { padding: clamp(2.5rem, 8vw, 4rem) 0 1.5rem; }
+  .eyebrow {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin: 0 0 0.9rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+  }
+  .eyebrow::before { content: ""; width: 26px; height: 1px; background: var(--gold); opacity: 0.7; }
+  header h1 {
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: clamp(1.7rem, 5vw, 2.4rem);
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    margin: 0 0 0.7rem;
+  }
+  header p {
+    color: var(--text-2);
+    margin: 0;
+    font-size: 1rem;
+  }
+
+  main { flex: 1; padding-bottom: 3rem; }
+
+  /* ── Tarjeta de conexión ── */
+  .panel {
+    background: linear-gradient(180deg, var(--surface), var(--bg-2));
+    border: 1px solid var(--line-2);
+    border-radius: 20px;
+    padding: clamp(1.5rem, 5vw, 2.2rem);
+    position: relative;
+    overflow: hidden;
+  }
+  .panel::before {
+    content: "";
+    position: absolute; inset: 0 auto 0 0;
+    width: 3px;
+    background: linear-gradient(180deg, var(--gold), transparent);
+  }
+
+  /* Sello de no-custodia */
+  .seal {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.06em;
+    color: var(--mint);
+    background: var(--mint-dim);
+    border: 1px solid rgba(86, 217, 160, 0.3);
+    border-radius: 999px;
+    padding: 0.35rem 0.8rem;
+    margin-bottom: 1.4rem;
+  }
+  .seal .dot {
+    width: 7px; height: 7px; border-radius: 50%;
+    background: var(--mint);
+    box-shadow: 0 0 0 0 rgba(86,217,160,0.6);
+    animation: pulse 2.4s ease-out infinite;
+  }
+  @keyframes pulse {
+    0%   { box-shadow: 0 0 0 0 rgba(86,217,160,0.5); }
+    70%  { box-shadow: 0 0 0 7px rgba(86,217,160,0); }
+    100% { box-shadow: 0 0 0 0 rgba(86,217,160,0); }
+  }
+
+  .panel h2 {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 1.25rem;
+    margin: 0 0 0.5rem;
+  }
+  .panel .sub { color: var(--text-2); font-size: 0.95rem; margin: 0 0 1.6rem; }
+
+  /* Botón principal */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.6rem;
+    width: 100%;
+    padding: 1rem 1.2rem;
+    border-radius: 12px;
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 1rem;
+    cursor: pointer;
+    border: 1px solid var(--gold);
+    color: #1A130A;
+    background: linear-gradient(180deg, #F0C978, var(--gold));
+    transition: transform 0.15s ease, box-shadow 0.25s ease, opacity 0.2s ease;
+  }
+  .btn:hover { transform: translateY(-1px); box-shadow: 0 10px 30px -10px rgba(224,180,87,0.5); }
+  .btn:active { transform: translateY(0) scale(0.99); }
+  .btn:disabled { opacity: 0.6; cursor: default; transform: none; box-shadow: none; }
+  .btn svg { display: block; }
+
+  .btn--ghost {
+    background: transparent;
+    color: var(--text-2);
+    border: 1px solid var(--line-2);
+  }
+  .btn--ghost:hover { color: var(--text); border-color: var(--line-2); box-shadow: none; background: var(--surface-2); }
+
+  /* Nota bajo el botón */
+  .fineprint {
+    margin-top: 1rem;
+    font-size: 0.85rem;
+    color: var(--text-3);
+    text-align: center;
+    line-height: 1.5;
+  }
+  .fineprint b { color: var(--mint); font-weight: 500; }
+
+  /* ── Estado conectado ── */
+  .account { display: none; }
+  .account.is-visible { display: block; }
+  .connect-view.is-hidden { display: none; }
+
+  .row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.95rem 0;
+    border-bottom: 1px solid var(--line);
+  }
+  .row:last-of-type { border-bottom: none; }
+  .row .label {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text-3);
+  }
+  .row .value { font-family: var(--font-mono); font-size: 0.95rem; color: var(--text); text-align: right; }
+  .row .value.addr { color: var(--gold); }
+  .row .value.big { font-family: var(--font-display); font-size: 1.35rem; font-weight: 700; }
+
+  /* Etiqueta de red barata / cara */
+  .net-flag {
+    display: inline-block;
+    font-family: var(--font-mono);
+    font-size: 0.64rem;
+    letter-spacing: 0.06em;
+    padding: 0.18rem 0.5rem;
+    border-radius: 6px;
+    margin-left: 0.5rem;
+    vertical-align: middle;
+  }
+  .net-flag--good { color: var(--mint); background: var(--mint-dim); border: 1px solid rgba(86,217,160,0.3); }
+  .net-flag--warn { color: var(--gold); background: var(--gold-dim); border: 1px solid rgba(224,180,87,0.3); }
+
+  .account__actions { margin-top: 1.5rem; }
+
+  /* ── Avisos (sin wallet / error) ── */
+  .notice {
+    margin-top: 1rem;
+    border-radius: 12px;
+    padding: 0.9rem 1rem;
+    font-size: 0.9rem;
+    display: none;
+  }
+  .notice.is-visible { display: block; }
+  .notice--warn { background: var(--rose-dim); border: 1px solid rgba(224,133,122,0.35); color: var(--text); }
+  .notice--warn a { color: var(--gold); }
+
+  /* ── Pie ── */
+  footer {
+    padding: 1.5rem 0 2.5rem;
+    text-align: center;
+    color: var(--text-3);
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.04em;
+  }
+  footer .g { color: var(--gold); }
+</style>
+</head>
+<body>
+
+  <header>
+    <div class="wrap">
+      <p class="eyebrow">Fase 01 · Base</p>
+      <h1>Conecta tu wallet</h1>
+      <p>Tu dinero nunca sale de tu wallet. Esto solo lo lee — no custodia nada.</p>
+    </div>
+  </header>
+
+  <main>
+    <div class="wrap">
+      <div class="panel">
+        <span class="seal"><span class="dot"></span> Solo lectura · sin custodia</span>
+
+        <!-- Vista: no conectado -->
+        <div class="connect-view" id="connectView">
+          <h2>Empieza conectando</h2>
+          <p class="sub">Usa tu wallet (MetaMask u otra compatible). Te pedirá permiso; nada se mueve sin tu firma.</p>
+          <button class="btn" id="connectBtn">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="2" y="6" width="20" height="13" rx="2.5"></rect>
+              <path d="M2 10h20"></path>
+              <circle cx="17.5" cy="14" r="1.2" fill="currentColor" stroke="none"></circle>
+            </svg>
+            <span id="connectLabel">Conectar wallet</span>
+          </button>
+          <p class="fineprint">Al conectar, solo leemos tu dirección y tu saldo. <b>Nunca pedimos tus claves.</b></p>
+
+          <div class="notice notice--warn" id="noWallet">
+            No se detectó ninguna wallet en este navegador. Instala una como
+            <a href="https://metamask.io/" target="_blank" rel="noopener">MetaMask</a>
+            y recarga la página.
+          </div>
+          <div class="notice notice--warn" id="errorBox"></div>
+        </div>
+
+        <!-- Vista: conectado -->
+        <div class="account" id="accountView">
+          <h2>Wallet conectada</h2>
+          <p class="sub">Esto es lo que leemos de la red. Tu dinero sigue en tu control.</p>
+
+          <div class="row">
+            <span class="label">Dirección</span>
+            <span class="value addr" id="addr">—</span>
+          </div>
+          <div class="row">
+            <span class="label">Red</span>
+            <span class="value" id="network">—</span>
+          </div>
+          <div class="row">
+            <span class="label">Saldo</span>
+            <span class="value big" id="balance">—</span>
+          </div>
+
+          <div class="account__actions">
+            <button class="btn btn--ghost" id="disconnectBtn">Desconectar de la app</button>
+          </div>
+          <p class="fineprint">«Desconectar» olvida la sesión aquí. Tu wallet decide los permisos reales.</p>
+        </div>
+
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <div class="wrap">
+      No-custodial <span class="g">·</span> el dinero nunca pasa por nuestro servidor
+    </div>
+  </footer>
+
+  <!-- Librería web3 (ethers v6) desde CDN. Sin herramientas de build. -->
+  <script src="https://cdn.jsdelivr.net/npm/ethers@6.13.4/dist/ethers.umd.min.js"></script>
+  <script>
+    (function () {
+      "use strict";
+
+      // ── Redes conocidas: nombre, símbolo nativo y si es "barata" (objetivo del proyecto) ──
+      var NETWORKS = {
+        1:      { name: "Ethereum",      symbol: "ETH",   cheap: false },
+        56:     { name: "BNB Chain",     symbol: "BNB",   cheap: true  },
+        137:    { name: "Polygon",       symbol: "POL",   cheap: true  },
+        8453:   { name: "Base",          symbol: "ETH",   cheap: true  },
+        42161:  { name: "Arbitrum One",  symbol: "ETH",   cheap: true  },
+        10:     { name: "Optimism",      symbol: "ETH",   cheap: true  },
+        43114:  { name: "Avalanche",     symbol: "AVAX",  cheap: true  }
+      };
+
+      // ── Referencias al DOM ──
+      var connectView   = document.getElementById("connectView");
+      var accountView   = document.getElementById("accountView");
+      var connectBtn    = document.getElementById("connectBtn");
+      var connectLabel  = document.getElementById("connectLabel");
+      var disconnectBtn = document.getElementById("disconnectBtn");
+      var noWallet      = document.getElementById("noWallet");
+      var errorBox      = document.getElementById("errorBox");
+      var addrEl        = document.getElementById("addr");
+      var netEl         = document.getElementById("network");
+      var balEl         = document.getElementById("balance");
+
+      var provider = null;
+
+      // ── Utilidades ──
+      function shorten(a) {
+        return a ? a.slice(0, 6) + "…" + a.slice(-4) : "—";
+      }
+      function showError(msg) {
+        errorBox.textContent = msg;
+        errorBox.classList.add("is-visible");
+      }
+      function clearError() {
+        errorBox.classList.remove("is-visible");
+      }
+      function hasWallet() {
+        return typeof window.ethereum !== "undefined";
+      }
+
+      // ── Cambiar entre vistas ──
+      function showConnected() {
+        connectView.classList.add("is-hidden");
+        accountView.classList.add("is-visible");
+      }
+      function showDisconnected() {
+        accountView.classList.remove("is-visible");
+        connectView.classList.remove("is-hidden");
+        connectLabel.textContent = "Conectar wallet";
+        connectBtn.disabled = false;
+      }
+
+      // ── Leer y pintar los datos de la cuenta ──
+      async function refresh(address) {
+        try {
+          var net = await provider.getNetwork();
+          var chainId = Number(net.chainId);
+          var info = NETWORKS[chainId];
+          var symbol = info ? info.symbol : "";
+          var netName = info ? info.name : ("Red #" + chainId);
+
+          // Dirección
+          addrEl.textContent = shorten(address);
+
+          // Red + etiqueta barata/cara
+          var flag = "";
+          if (info && info.cheap) {
+            flag = '<span class="net-flag net-flag--good">barata</span>';
+          } else if (info && !info.cheap) {
+            flag = '<span class="net-flag net-flag--warn">gas alto</span>';
+          }
+          netEl.innerHTML = netName + flag;
+
+          // Saldo nativo
+          var raw = await provider.getBalance(address);
+          var eth = ethers.formatEther(raw);
+          var pretty = parseFloat(eth).toLocaleString("es", { maximumFractionDigits: 5 });
+          balEl.textContent = pretty + (symbol ? " " + symbol : "");
+
+          showConnected();
+        } catch (err) {
+          showError("No se pudo leer la cuenta: " + (err && err.message ? err.message : err));
+        }
+      }
+
+      // ── Conectar (pide permiso) ──
+      async function connect() {
+        clearError();
+        if (!hasWallet()) {
+          noWallet.classList.add("is-visible");
+          return;
+        }
+        try {
+          connectBtn.disabled = true;
+          connectLabel.textContent = "Conectando…";
+          provider = new ethers.BrowserProvider(window.ethereum);
+          var accounts = await provider.send("eth_requestAccounts", []);
+          if (accounts && accounts.length) {
+            await refresh(accounts[0]);
+          } else {
+            showDisconnected();
+          }
+        } catch (err) {
+          // 4001 = el usuario rechazó la conexión
+          if (err && err.code === 4001) {
+            showError("Conexión cancelada. Puedes intentarlo de nuevo cuando quieras.");
+          } else {
+            showError("No se pudo conectar: " + (err && err.message ? err.message : err));
+          }
+          showDisconnected();
+        }
+      }
+
+      // ── Reintento silencioso: si ya hay permiso, reconecta sin pedir nada ──
+      async function trySilent() {
+        if (!hasWallet()) {
+          noWallet.classList.add("is-visible");
+          return;
+        }
+        try {
+          provider = new ethers.BrowserProvider(window.ethereum);
+          var accounts = await provider.send("eth_accounts", []); // no abre popup
+          if (accounts && accounts.length) {
+            await refresh(accounts[0]);
+          }
+        } catch (err) {
+          // silencioso: si falla, se queda en la vista de conectar
+        }
+      }
+
+      // ── "Desconectar" de la app (la wallet mantiene sus permisos) ──
+      function disconnect() {
+        provider = null;
+        addrEl.textContent = "—";
+        netEl.textContent = "—";
+        balEl.textContent = "—";
+        showDisconnected();
+      }
+
+      // ── Reaccionar a cambios en la wallet ──
+      if (hasWallet()) {
+        window.ethereum.on("accountsChanged", function (accounts) {
+          if (accounts && accounts.length) {
+            provider = new ethers.BrowserProvider(window.ethereum);
+            refresh(accounts[0]);
+          } else {
+            disconnect(); // el usuario desconectó desde la wallet
+          }
+        });
+        window.ethereum.on("chainChanged", function () {
+          // al cambiar de red, releemos todo
+          trySilent();
+        });
+      }
+
+      // ── Enlazar botones ──
+      connectBtn.addEventListener("click", connect);
+      disconnectBtn.addEventListener("click", disconnect);
+
+      // ── Al cargar: intentar reconexión silenciosa ──
+      trySilent();
+    })();
+  </script>
+</body>
+</html>
