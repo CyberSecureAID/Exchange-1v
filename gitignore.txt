@@ -1,0 +1,6 @@
+# Nunca subir la configuración con la API key secreta
+backend/config.php
+
+# Archivos del sistema
+.DS_Store
+Thumbs.db

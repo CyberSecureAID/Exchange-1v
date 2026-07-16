@@ -172,6 +172,26 @@ nuestro público.
 | Fase 04 · Órdenes límite | ⏳ Requiere backend (Hostinger) — primer trabajo del siguiente hito |
 | Fase 05 · Antes de abrir | ⬜ Pendiente |
 
+### Backend (para cuando se contrate el hosting)
+
+Se está escribiendo por adelantado, para tenerlo listo. No requiere pagar nada
+para desarrollarlo; el hosting se contrata al final, con el producto terminado.
+
+- `backend/0x-proxy.php` — **Proxy de 0x**. Esconde la API key: el frontend llama
+  a este archivo y él añade la key y reenvía a 0x. Así la key nunca viaja al
+  navegador. Corre en PHP (nativo en Hostinger compartido). Tiene allowlist de
+  endpoints y control de CORS.
+- `backend/config.example.php` — Plantilla de configuración. Se copia a
+  `config.php` y se pone ahí la API key. `config.php` **no se sube** al repo
+  (está en `.gitignore`), porque la key es secreta.
+
+**Cómo conectar el frontend al proxy** (cuando el backend esté desplegado): en
+`swap.html`, cambiar la constante `API_BASE` de `https://api.0x.org` a la URL del
+proxy (p. ej. `https://tudominio.com/api/0x-proxy.php`), pasar el endpoint como
+parámetro `path`, y **quitar el campo de API key del frontend** (ya no hace falta
+ahí: la pone el servidor). Hasta entonces, `swap.html` sigue en modo directo con
+la key en la interfaz, solo para pruebas.
+
 ### Archivos del repo
 
 - `README.md` — este documento (la brújula).
