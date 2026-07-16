@@ -12,6 +12,10 @@
 // Tu API key de 0x (se saca gratis en el panel de developers de 0x).
 define('ZEROX_API_KEY', 'PON_AQUI_TU_API_KEY_DE_0X');
 
+// Tu API key de 1inch (se saca gratis en el portal de developers de 1inch).
+// La usan las órdenes límite (backend/1inch-orders.php).
+define('ONEINCH_API_KEY', 'PON_AQUI_TU_API_KEY_DE_1INCH');
+
 // Origen permitido para llamar al proxy (tu frontend).
 //   - En desarrollo puedes dejar '*' (cualquiera).
 //   - En producción, ponlo a tu dominio exacto, p. ej.:

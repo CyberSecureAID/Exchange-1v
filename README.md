@@ -170,6 +170,7 @@ nuestro público.
 | Fase 03 · Comisión | ✅ Incluida en Fase 02 (0,05% vía 0x) |
 | Fase 04 · Panel de ganancias | ✅ Hecho |
 | Fase 04 · Órdenes límite | ⏳ Requiere backend (Hostinger) — primer trabajo del siguiente hito |
+| Fase 04 · Órdenes límite | 🟡 Backend listo · falta la firma (SDK, entorno build) |
 | Fase 05 · Antes de abrir | ⬜ Pendiente |
 
 ### Backend (para cuando se contrate el hosting)
@@ -177,15 +178,28 @@ nuestro público.
 Se está escribiendo por adelantado, para tenerlo listo. No requiere pagar nada
 para desarrollarlo; el hosting se contrata al final, con el producto terminado.
 
-- `backend/0x-proxy.php` — **Proxy de 0x**. Esconde la API key: el frontend llama
-  a este archivo y él añade la key y reenvía a 0x. Así la key nunca viaja al
-  navegador. Corre en PHP (nativo en Hostinger compartido). Tiene allowlist de
-  endpoints y control de CORS.
+- `backend/0x-proxy.php` — **Proxy de 0x**. Esconde la API key de 0x: el frontend
+  llama a este archivo y él añade la key y reenvía a 0x. Allowlist de endpoints y
+  control de CORS.
+- `backend/1inch-orders.php` — **Órdenes límite (proxy de 1inch)**. Esconde la key
+  de 1inch y hace tres cosas: `submit` (transmitir una orden **ya firmada**),
+  `list` (órdenes de una dirección) y `status` (estado de una orden). **No
+  construye ni firma** la orden — eso es del SDK (ver abajo). No necesita base de
+  datos: 1inch mantiene el libro de órdenes. No custodia nada.
 - `backend/config.example.php` — Plantilla de configuración. Se copia a
-  `config.php` y se pone ahí la API key. `config.php` **no se sube** al repo
-  (está en `.gitignore`), porque la key es secreta.
+  `config.php` y se ponen ahí las API keys (0x y 1inch). `config.php` **no se
+  sube** al repo (está en `.gitignore`).
 
-**Cómo conectar el frontend al proxy** (cuando el backend esté desplegado): en
+### Lo que falta de las órdenes límite (pieza pendiente, importante)
+
+El backend ya transmite y consulta órdenes. **Falta la construcción y firma de la
+orden en el frontend**, que es la parte delicada (estructura de 1inch: MakerTraits
+en bits, salt, firma EIP-712). Por seguridad NO se hace a mano: se hace con el
+**SDK oficial de 1inch**, que necesita un **entorno con build** (npm) — un salto
+respecto a los HTML sueltos actuales. Esa es su propia tarea, y **se prueba
+primero en una red de test con montos mínimos** antes de tocar dinero real.
+
+### Cómo conectar el frontend a los proxys
 `swap.html`, cambiar la constante `API_BASE` de `https://api.0x.org` a la URL del
 proxy (p. ej. `https://tudominio.com/api/0x-proxy.php`), pasar el endpoint como
 parámetro `path`, y **quitar el campo de API key del frontend** (ya no hace falta
