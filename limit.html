@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Plataforma no-custodial · Órdenes límite</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0A0E18; --bg-2:#0E1320; --surface:#121A2B; --surface-2:#18223A;
+    --line:rgba(150,175,220,0.12); --line-2:rgba(150,175,220,0.22);
+    --text:#EAEEF7; --text-2:#9AA6BE; --text-3:#626E86;
+    --gold:#E0B457; --gold-dim:rgba(224,180,87,0.16);
+    --mint:#56D9A0; --mint-dim:rgba(86,217,160,0.14);
+    --rose:#E0857A; --rose-dim:rgba(224,133,122,0.14);
+    --font-display:'Sora',system-ui,sans-serif;
+    --font-body:'Inter',system-ui,sans-serif;
+    --font-mono:'JetBrains Mono',ui-monospace,monospace;
+  }
+  *{box-sizing:border-box;}
+  @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important;}}
+  body{margin:0;min-height:100vh;
+    background:radial-gradient(1100px 600px at 80% -5%,rgba(224,180,87,0.07),transparent 60%),radial-gradient(900px 500px at 0% 10%,rgba(86,217,160,0.05),transparent 55%),var(--bg);
+    color:var(--text);font-family:var(--font-body);line-height:1.6;-webkit-font-smoothing:antialiased;}
+  .wrap{width:100%;max-width:560px;margin:0 auto;padding:0 1.5rem;}
+  header{padding:clamp(2.5rem,8vw,3.5rem) 0 1.2rem;}
+  .eyebrow{font-family:var(--font-mono);font-size:0.72rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--gold);margin:0 0 0.9rem;display:inline-flex;align-items:center;gap:0.6rem;}
+  .eyebrow::before{content:"";width:26px;height:1px;background:var(--gold);opacity:0.7;}
+  header h1{font-family:var(--font-display);font-weight:800;font-size:clamp(1.7rem,5vw,2.4rem);line-height:1.1;letter-spacing:-0.02em;margin:0 0 0.7rem;}
+  header p{color:var(--text-2);margin:0;font-size:1rem;}
+  main{padding-bottom:3rem;}
+
+  .panel{background:linear-gradient(180deg,var(--surface),var(--bg-2));border:1px solid var(--line-2);border-radius:20px;padding:clamp(1.4rem,5vw,2rem);position:relative;overflow:hidden;margin-bottom:1rem;}
+  .panel::before{content:"";position:absolute;inset:0 auto 0 0;width:3px;background:linear-gradient(180deg,var(--gold),transparent);}
+  h2.title{font-family:var(--font-display);font-weight:600;font-size:1.15rem;margin:0 0 1.1rem;}
+
+  .field{margin-bottom:1rem;}
+  .field label{display:block;font-family:var(--font-mono);font-size:0.66rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--text-3);margin-bottom:0.45rem;}
+  .control{display:flex;gap:0.6rem;background:var(--bg-2);border:1px solid var(--line-2);border-radius:12px;padding:0.3rem 0.3rem 0.3rem 0.9rem;align-items:center;}
+  .control input,.control select{background:transparent;border:none;color:var(--text);font-family:var(--font-body);font-size:1rem;outline:none;width:100%;padding:0.6rem 0;}
+  .control select{cursor:pointer;font-family:var(--font-mono);font-size:0.9rem;flex:0 0 auto;border-left:1px solid var(--line-2);padding-left:0.6rem;}
+  .control select option{background:var(--surface);}
+  .swap-arrow{display:flex;justify-content:center;color:var(--text-3);margin:-0.2rem 0 0.6rem;font-family:var(--font-mono);}
+
+  .price-hint{font-family:var(--font-mono);font-size:0.82rem;color:var(--mint);text-align:center;margin:0.2rem 0 0.5rem;min-height:1.1em;}
+
+  .btn{display:inline-flex;align-items:center;justify-content:center;gap:0.6rem;width:100%;padding:1rem 1.2rem;border-radius:12px;font-family:var(--font-display);font-weight:600;font-size:1rem;cursor:pointer;border:1px solid var(--gold);color:#1A130A;background:linear-gradient(180deg,#F0C978,var(--gold));transition:transform 0.15s,box-shadow 0.25s,opacity 0.2s;}
+  .btn:hover{transform:translateY(-1px);box-shadow:0 10px 30px -10px rgba(224,180,87,0.5);}
+  .btn:disabled{opacity:0.5;cursor:default;transform:none;box-shadow:none;}
+  .btn--ghost{background:transparent;color:var(--text-2);border:1px solid var(--line-2);}
+  .btn--ghost:hover{color:var(--text);background:var(--surface-2);box-shadow:none;}
+  .btn + .btn{margin-top:0.7rem;}
+
+  .notice{border-radius:12px;padding:0.85rem 1rem;font-size:0.86rem;line-height:1.5;margin-bottom:1rem;}
+  .notice--danger{background:var(--rose-dim);border:1px solid rgba(224,133,122,0.4);color:var(--text);}
+  .notice--info{background:var(--gold-dim);border:1px solid rgba(224,180,87,0.3);color:var(--text-2);}
+  .notice--warn{background:var(--rose-dim);border:1px solid rgba(224,133,122,0.35);color:var(--text);display:none;margin-top:1rem;}
+  .notice--warn.is-visible{display:block;}
+  .notice--ok{background:var(--mint-dim);border:1px solid rgba(86,217,160,0.3);color:var(--text);display:none;margin-top:1rem;}
+  .notice--ok.is-visible{display:block;}
+  .notice b{color:var(--text);} .notice--info b{color:var(--gold);} .notice--danger b{color:var(--rose);}
+
+  .status{font-family:var(--font-mono);font-size:0.82rem;color:var(--text-2);text-align:center;margin-top:0.8rem;min-height:1.2em;}
+  .connect-hint{text-align:center;color:var(--text-3);font-size:0.9rem;margin-top:0.8rem;}
+
+  .orders .order{padding:0.9rem 0;border-bottom:1px solid var(--line);font-family:var(--font-mono);font-size:0.82rem;color:var(--text-2);}
+  .orders .order:last-child{border-bottom:none;}
+  .orders .empty{color:var(--text-3);text-align:center;padding:1.5rem 0;font-size:0.9rem;font-family:var(--font-body);}
+
+  footer{padding:1.5rem 0 2.5rem;text-align:center;color:var(--text-3);font-family:var(--font-mono);font-size:0.72rem;}
+  footer .g{color:var(--gold);}
+</style>
+</head>
+<body>
+
+  <header>
+    <div class="wrap">
+      <p class="eyebrow">Fase 04 · Órdenes límite</p>
+      <h1>Compra o vende a tu precio</h1>
+      <p>Firmas una orden con tu wallet; los resolvers de 1inch la ejecutan cuando el precio se cumple. No custodiamos nada.</p>
+    </div>
+  </header>
+
+  <main>
+    <div class="wrap">
+
+      <div class="notice notice--danger">
+        <b>⚠ Pieza avanzada y experimental.</b> Esta es la parte más delicada del proyecto y
+        <b>no está probada en producción</b>. Antes de usarla con dinero real: pruébala en una
+        <b>red de test</b> y con <b>montos mínimos</b>. Firmar la orden no mueve fondos, pero el
+        precio y las cantidades deben estar bien.
+      </div>
+
+      <!-- Conexión -->
+      <div class="panel">
+        <h2 class="title">1 · Conecta tu wallet</h2>
+        <button class="btn" id="connectBtn">Conectar wallet</button>
+        <p class="connect-hint" id="connHint">Necesario para firmar la orden.</p>
+      </div>
+
+      <!-- Backend -->
+      <div class="panel">
+        <h2 class="title">2 · Tu backend</h2>
+        <div class="notice notice--info" style="margin-bottom:1rem;">
+          La orden firmada se envía a <b>tu</b> proxy <code>1inch-orders.php</code> (así la API key
+          de 1inch queda en el servidor). Sin el backend desplegado, no se puede enviar ni listar.
+        </div>
+        <div class="field" style="margin-bottom:0;">
+          <label for="backendUrl">URL de tu backend</label>
+          <div class="control"><input type="text" id="backendUrl" placeholder="https://tudominio.com/api/1inch-orders.php"></div>
+        </div>
+      </div>
+
+      <!-- Crear orden -->
+      <div class="panel">
+        <h2 class="title">3 · Crea la orden</h2>
+
+        <div class="field">
+          <label>Vendes (debe ser un token, no el nativo)</label>
+          <div class="control">
+            <input type="text" id="sellAmount" inputmode="decimal" placeholder="0.0">
+            <select id="sellToken"></select>
+          </div>
+        </div>
+
+        <div class="swap-arrow">↓</div>
+
+        <div class="field">
+          <label>Recibes (al precio que quieres)</label>
+          <div class="control">
+            <input type="text" id="buyAmount" inputmode="decimal" placeholder="0.0">
+            <select id="buyToken"></select>
+          </div>
+        </div>
+
+        <p class="price-hint" id="priceHint"></p>
+
+        <div class="field">
+          <label for="expiry">Vence en</label>
+          <div class="control">
+            <select id="expiry" style="border-left:none;padding-left:0;">
+              <option value="3600">1 hora</option>
+              <option value="86400" selected>1 día</option>
+              <option value="604800">1 semana</option>
+              <option value="2592000">30 días</option>
+            </select>
+          </div>
+        </div>
+
+        <button class="btn" id="createBtn" disabled>Aprobar y crear orden</button>
+        <div class="status" id="status"></div>
+        <div class="notice notice--warn" id="errorBox"></div>
+        <div class="notice notice--ok" id="okBox"></div>
+      </div>
+
+      <!-- Órdenes activas -->
+      <div class="panel">
+        <h2 class="title">Tus órdenes</h2>
+        <button class="btn btn--ghost" id="listBtn">Actualizar lista</button>
+        <div class="orders" id="orders"><div class="empty">Conecta y pulsa «Actualizar lista».</div></div>
+      </div>
+
+    </div>
+  </main>
+
+  <footer>
+    <div class="wrap">No-custodial <span class="g">·</span> tú firmas · 1inch ejecuta · nadie custodia</div>
+  </footer>
+
+  <script type="module">
+    // ── SDK de 1inch + ethers, como módulos ESM desde CDN (sin build) ──
+    // Si algún import falla, es la señal de pasar a un entorno con bundler.
+    import { LimitOrder, MakerTraits, Address, randBigInt } from "https://esm.sh/@1inch/limit-order-sdk";
+    import { BrowserProvider, Contract, MaxUint256, parseUnits, formatUnits } from "https://esm.sh/ethers@6";
+
+    // Tokens de referencia por red (verifica direcciones antes de usar en serio).
+    const NATIVE = "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE";
+    const TOKENS = {
+      8453: [ {s:"WETH",a:"0x4200000000000000000000000000000000000006",d:18}, {s:"USDC",a:"0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",d:6} ],
+      56:   [ {s:"WBNB",a:"0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c",d:18}, {s:"USDT",a:"0x55d398326f99059fF775485246999027B3197955",d:18} ],
+      137:  [ {s:"USDC",a:"0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359",d:6}, {s:"USDT",a:"0xc2132D05D31c914a87C6611C10748AEb04B58e8F",d:6} ],
+      42161:[ {s:"USDC",a:"0xaf88d065e77c8cC2239327C5EDb3A432268e5831",d:6}, {s:"USDT",a:"0xFd086bC7CD5C481DCC9C85ebE478A1C0b69FCbb9",d:6} ]
+    };
+    const ERC20_ABI = ["function approve(address,uint256) returns (bool)","function allowance(address,address) view returns (uint256)"];
+    const UINT_40_MAX = (1n << 40n) - 1n;
+
+    let provider=null, signer=null, userAddr=null, chainId=null;
+
+    const $=(id)=>document.getElementById(id);
+    const connectBtn=$("connectBtn"), connHint=$("connHint"), backendUrl=$("backendUrl");
+    const sellSel=$("sellToken"), buySel=$("buyToken"), sellAmt=$("sellAmount"), buyAmt=$("buyAmount");
+    const priceHint=$("priceHint"), expiry=$("expiry"), createBtn=$("createBtn");
+    const statusEl=$("status"), errorBox=$("errorBox"), okBox=$("okBox");
+    const listBtn=$("listBtn"), ordersEl=$("orders");
+
+    const short=(a)=> a? a.slice(0,6)+"…"+a.slice(-4):"—";
+    const setStatus=(t)=> statusEl.textContent=t||"";
+    const err=(t)=>{ errorBox.textContent=t; errorBox.classList.add("is-visible"); okBox.classList.remove("is-visible"); };
+    const ok=(t)=>{ okBox.innerHTML=t; okBox.classList.add("is-visible"); errorBox.classList.remove("is-visible"); };
+    const clearMsgs=()=>{ errorBox.classList.remove("is-visible"); okBox.classList.remove("is-visible"); };
+    const tokenOf=(sel)=> TOKENS[chainId][parseInt(sel.value,10)];
+
+    function loadTokens(){
+      const list=TOKENS[chainId];
+      sellSel.innerHTML=""; buySel.innerHTML="";
+      if(!list){ createBtn.disabled=true; err("Red #"+chainId+" sin tokens de referencia. Usa Base, BNB, Polygon o Arbitrum."); return; }
+      list.forEach((t,i)=>{ const o1=new Option(t.s,i), o2=new Option(t.s,i); sellSel.add(o1); buySel.add(o2); });
+      sellSel.value="0"; buySel.value= list.length>1?"1":"0";
+      createBtn.disabled=false; clearMsgs(); updatePrice();
+    }
+
+    function updatePrice(){
+      const s=parseFloat(sellAmt.value), b=parseFloat(buyAmt.value);
+      if(s>0 && b>0){ const st=tokenOf(sellSel), bt=tokenOf(buySel); priceHint.textContent="Precio: 1 "+st.s+" = "+(b/s).toLocaleString("es",{maximumFractionDigits:6})+" "+bt.s; }
+      else priceHint.textContent="";
+    }
+
+    async function connect(){
+      clearMsgs();
+      if(typeof window.ethereum==="undefined"){ err("No se detectó wallet. Instala MetaMask."); return; }
+      try{
+        provider=new BrowserProvider(window.ethereum);
+        await provider.send("eth_requestAccounts",[]);
+        signer=await provider.getSigner();
+        userAddr=await signer.getAddress();
+        chainId=Number((await provider.getNetwork()).chainId);
+        connectBtn.textContent=short(userAddr);
+        connHint.textContent="Conectado · red #"+chainId;
+        loadTokens();
+      }catch(e){ err("No se pudo conectar: "+(e?.message||e)); }
+    }
+
+    async function createOrder(){
+      clearMsgs(); createBtn.disabled=true;
+      try{
+        const sell=tokenOf(sellSel), buy=tokenOf(buySel);
+        if(sell.a===NATIVE){ throw new Error("El token que vendes no puede ser el nativo. Usa su versión envuelta (WETH, WBNB…)."); }
+        if(sell.a===buy.a){ throw new Error("Elige dos tokens distintos."); }
+        const sAmt=(sellAmt.value||"").trim(), bAmt=(buyAmt.value||"").trim();
+        if(!(parseFloat(sAmt)>0) || !(parseFloat(bAmt)>0)){ throw new Error("Escribe las dos cantidades."); }
+
+        const makingAmount=parseUnits(sAmt, sell.d);
+        const takingAmount=parseUnits(bAmt, buy.d);
+        const expiration=BigInt(Math.floor(Date.now()/1000)) + BigInt(expiry.value);
+
+        // 1) Construir la orden con el SDK (MakerTraits: vencimiento + nonce)
+        const makerTraits=MakerTraits.default().withExpiration(expiration).withNonce(randBigInt(UINT_40_MAX));
+        const order=new LimitOrder({
+          makerAsset:new Address(sell.a),
+          takerAsset:new Address(buy.a),
+          makingAmount, takingAmount,
+          maker:new Address(userAddr)
+        }, makerTraits);
+
+        // 2) La dirección del contrato la da el propio SDK (no la escribimos a mano)
+        const typedData=order.getTypedData(chainId);
+        const lopAddress=typedData.domain.verifyingContract;
+
+        // 3) Aprobar que el contrato pueda mover el token que vendes (una vez)
+        setStatus("Comprobando permiso del token…");
+        const erc=new Contract(sell.a, ERC20_ABI, signer);
+        const current=await erc.allowance(userAddr, lopAddress);
+        if(current < makingAmount){
+          setStatus("Aprobando el token en tu wallet…");
+          const txA=await erc.approve(lopAddress, MaxUint256);
+          await txA.wait();
+        }
+
+        // 4) Firmar la orden (EIP-712). Esto NO mueve fondos.
+        setStatus("Firma la orden en tu wallet…");
+        const signature=await signer.signTypedData(typedData.domain, {Order:typedData.types.Order}, typedData.message);
+
+        // 5) Enviar la orden firmada a TU backend (que la reenvía a 1inch con tu key)
+        const url=(backendUrl.value||"").trim();
+        if(!url){ throw new Error("Pon la URL de tu backend (paso 2) para enviar la orden."); }
+        setStatus("Enviando la orden…");
+        const payload={ orderHash:order.getOrderHash(chainId), signature, data:order.build() };
+        const res=await fetch(url+"?op=submit&chain="+chainId, {
+          method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify(payload)
+        });
+        const out=await res.json().catch(()=>({}));
+        setStatus("");
+        if(!res.ok){ throw new Error(out.error||out.description||("Error "+res.status+" al enviar la orden.")); }
+        ok("Orden creada y enviada ✓ · se ejecutará sola cuando el precio se cumpla.");
+        listOrders();
+      }catch(e){
+        setStatus("");
+        if(e && e.code===4001){ err("Firma cancelada en la wallet."); }
+        else{ err(e?.message||String(e)); }
+      }finally{ createBtn.disabled=false; }
+    }
+
+    async function listOrders(){
+      const url=(backendUrl.value||"").trim();
+      if(!url){ ordersEl.innerHTML='<div class="empty">Pon la URL de tu backend arriba.</div>'; return; }
+      if(!userAddr){ ordersEl.innerHTML='<div class="empty">Conecta tu wallet primero.</div>'; return; }
+      ordersEl.innerHTML='<div class="empty">Cargando…</div>';
+      try{
+        const res=await fetch(url+"?op=list&chain="+chainId+"&address="+userAddr);
+        const data=await res.json();
+        const arr=Array.isArray(data)?data:(data.orders||data.items||[]);
+        if(!arr.length){ ordersEl.innerHTML='<div class="empty">No tienes órdenes activas.</div>'; return; }
+        ordersEl.innerHTML=arr.map((o,i)=>{
+          const h=o.orderHash||o.hash||("orden "+(i+1));
+          return '<div class="order">'+short(h)+' · '+(o.status||o.orderStatus||"activa")+'</div>';
+        }).join("");
+      }catch(e){
+        ordersEl.innerHTML='<div class="empty">No se pudieron cargar (revisa el backend y la red).</div>';
+      }
+    }
+
+    connectBtn.addEventListener("click", connect);
+    createBtn.addEventListener("click", createOrder);
+    listBtn.addEventListener("click", listOrders);
+    [sellAmt,buyAmt,sellSel,buySel].forEach(el=> el.addEventListener("input", updatePrice));
+    [sellSel,buySel].forEach(el=> el.addEventListener("change", updatePrice));
+    if(typeof window.ethereum!=="undefined"){
+      window.ethereum.on("chainChanged", ()=>location.reload());
+      window.ethereum.on("accountsChanged", ()=>location.reload());
+    }
+  </script>
+</body>
+</html>

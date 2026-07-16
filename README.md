@@ -171,7 +171,7 @@ nuestro público.
 | Fase 04 · Panel de ganancias | ✅ Hecho |
 | Fase 04 · Órdenes límite | ⏳ Requiere backend (Hostinger) — primer trabajo del siguiente hito |
 | Fase 04 · Panel de ganancias | ✅ Frontend hecho · 🟡 base de datos lista (conectar) |
-| Fase 04 · Órdenes límite | 🟡 Backend listo · falta la firma (SDK, entorno build) |
+| Fase 04 · Órdenes límite | 🟡 Completo · sin probar (probar en testnet antes de producción) |
 | Fase 05 · Antes de abrir | ⬜ Pendiente |
 
 ### Backend (para cuando se contrate el hosting)
@@ -231,6 +231,13 @@ la key en la interfaz, solo para pruebas.
   registra posiciones, busca el precio actual (CoinGecko, sin key) y calcula la
   ganancia/pérdida, con resumen total y una gráfica de barras por posición.
   Guarda en el navegador (localStorage) como puente.
+- `limit.html` — **Fase 04 · Órdenes límite**. Crea y **firma** una orden límite
+  con el **SDK oficial de 1inch** (cargado como módulo ESM desde CDN, sin build).
+  El usuario aprueba el token una vez, firma la orden (no mueve fondos) y esta se
+  envía a `backend/1inch-orders.php`. Los resolvers de 1inch la ejecutan cuando el
+  precio se cumple. La dirección del contrato para el `approve` la da el propio
+  SDK. **No probado en red real: probar en testnet con montos mínimos antes de
+  producción.**
 
 ### El siguiente hito: el backend (Hostinger)
 
