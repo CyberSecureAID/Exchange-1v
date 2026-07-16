@@ -166,17 +166,35 @@ nuestro público.
 |---|---|
 | Documentación / brújula (este README) | ✅ Hecho |
 | Fase 01 · Base | ✅ Hecho |
-| Fase 02 · Intercambio | ⏳ Siguiente |
-| Fase 03–05 | ⬜ Pendiente |
+| Fase 02 · Intercambio | ✅ Hecho |
+| Fase 03 · Comisión | ✅ Incluida en Fase 02 (0,05% vía 0x) |
+| Fase 04 · Diferenciación | ⏳ Siguiente |
+| Fase 05 · Antes de abrir | ⬜ Pendiente |
 
 ### Archivos del repo
 
 - `README.md` — este documento (la brújula).
 - `index.html` — **Fase 01**. Conexión de wallet y lectura de saldo, sin
-  custodia. Usa ethers.js v6 desde CDN (sin herramientas de build), así que se
-  puede subir a GitHub Pages y probar directamente. Detecta la red y marca si es
-  «barata» (objetivo del proyecto) o de «gas alto». Reintenta la conexión en
-  silencio si la wallet ya dio permiso, y reacciona a cambios de cuenta y de red.
+  custodia. ethers.js v6 desde CDN. Detecta la red y marca si es «barata».
+- `swap.html` — **Fase 02**. Primer intercambio real vía el agregador **0x**:
+  elige tokens y monto, consulta el mejor precio entre DEX, y ejecuta el swap
+  firmado por el usuario (con `approve` automático si el token lo requiere).
+  Incluye ya la **comisión del 0,05% (5 bps)** mediante los parámetros de fee de
+  0x (Fase 03 adelantada). El dinero nunca pasa por nosotros.
+
+### Pendiente técnico anotado (para no olvidar)
+
+- **API key de 0x en el frontend:** en `swap.html` la key se introduce en la
+  interfaz solo para probar. **En producción debe ir en un proxy en el
+  servidor** (Hostinger), no expuesta en el navegador. Además, algunas APIs
+  bloquean llamadas directas desde el navegador (CORS); si aparece ese error, es
+  la señal de que toca montar el proxy. La lógica ya queda lista para ese
+  momento.
+- **Direcciones de tokens:** las de referencia en `swap.html` deben verificarse
+  en el explorador de cada red antes de operar con cantidades reales. Probar
+  siempre primero con montos mínimos.
+- **Wallet que cobra la comisión:** se configura en «Ajustes y seguridad» dentro
+  de `swap.html`. Si se deja vacía, se opera sin comisión (modo prueba).
 
 *Se irá ampliando archivo por archivo, poco a poco.*
 
